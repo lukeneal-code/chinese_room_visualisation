@@ -1,0 +1,34 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: chinese-room-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              count: all
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: chinese-room-app
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - MODEL_NAME=qwen2.5:7b
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+volumes:
+  ollama_data:

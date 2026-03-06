@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Chinese Room</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>The Chinese Room</h1>
+        <p class="subtitle">A Simulation of Searle's Thought Experiment</p>
+
+        <!-- MENU SCREEN -->
+        <div id="menu-screen" class="screen active">
+            <div class="menu-box">
+                <div class="explanation">
+                    <strong>The Experiment:</strong> You are locked in a room. Chinese messages
+                    slide under the door. You don't understand Chinese, but you have a
+                    <em>rulebook</em> &mdash; a set of pattern-matching rules that tell you
+                    which symbols to send back. To the person outside, it seems like you
+                    speak Chinese. But do you <em>understand</em> it?
+                    <br><br>
+                    Match incoming symbols to rules, then construct your response on the
+                    character grid. In LLM mode, a real language model plays the person
+                    outside the room.
+                </div>
+
+                <label for="category-select">Rulebook Category</label>
+                <select id="category-select"></select>
+
+                <label for="difficulty-select">Difficulty</label>
+                <select id="difficulty-select"></select>
+
+                <div class="btn-group" style="margin-top: 20px;">
+                    <button class="btn" onclick="startRulebookGame()">
+                        Rulebook Mode
+                    </button>
+                    <button class="btn btn-secondary" onclick="startLLMGame()">
+                        LLM Mode
+                    </button>
+                </div>
+
+                <div id="llm-loading" class="loading" style="display:none;">
+                    <div class="spinner"></div>
+                    <div>Connecting to LLM... pulling model if needed</div>
+                </div>
+            </div>
+
+            <div class="quote">
+                "Syntax is not sufficient for semantics."
+                <cite>&mdash; John Searle, 1980</cite>
+            </div>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="game-screen" class="screen">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <button class="btn btn-secondary" onclick="backToMenu()" style="padding: 6px 14px; font-size: 0.75rem;">
+                    Back
+                </button>
+                <span id="mode-badge" class="mode-badge rulebook-mode">Rulebook Mode</span>
+            </div>
+
+            <div class="status-bar">
+                <span class="score">Score: <strong id="score-display">0</strong></span>
+                <span class="round-num">Round: <strong id="round-display">1</strong></span>
+                <span class="timer">Time: <strong id="timer-display">60</strong>s</span>
+            </div>
+
+            <div class="game-layout" style="margin-top: 16px;">
+                <!-- Left: Rulebook -->
+                <div class="rulebook">
+                    <h3>Rulebook</h3>
+                    <div id="rulebook-rules"></div>
+                </div>
+
+                <!-- Right: Game area -->
+                <div class="game-main">
+                    <!-- Incoming message -->
+                    <div class="incoming-panel">
+                        <div class="incoming-label">Message slid under the door</div>
+                        <div class="incoming-message" id="incoming-msg"></div>
+                    </div>
+
+                    <!-- Character grid -->
+                    <div class="grid-panel">
+                        <h3>Symbol Grid &mdash; click to build your response</h3>
+                        <div class="char-grid" id="char-grid"></div>
+                    </div>
+
+                    <!-- Answer construction -->
+                    <div class="answer-panel">
+                        <h3>Your Response (click characters to remove)</h3>
+                        <div class="answer-slots" id="answer-slots"></div>
+                        <div class="answer-actions">
+                            <button class="btn" onclick="submitAnswer()">
+                                Slide Under Door
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearAnswer()">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div id="feedback" class="feedback">
+                        <div class="feedback-icon" id="feedback-icon"></div>
+                        <div class="feedback-message" id="feedback-msg"></div>
+                        <div class="feedback-message" id="feedback-score"></div>
+                        <div class="feedback-expected" id="feedback-expected"></div>
+                        <button class="btn" id="feedback-continue">Next Round</button>
+                    </div>
+
+                    <!-- Conversation log -->
+                    <div class="conversation">
+                        <h3>Conversation Log</h3>
+                        <div id="conversation-log"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
